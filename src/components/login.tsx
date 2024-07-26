@@ -1,5 +1,5 @@
 import { Avatar, Grid, Paper } from "@mui/material";
-import { ICON } from "../const";
+import { ICON } from "../Constants";
 import "../App.css";
 import AuthForm from "./AuthForm";
 
