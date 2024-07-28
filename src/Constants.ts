@@ -1,3 +1,4 @@
+export const ICON = "/img/icon.png";
 export const SIGNUP_TEXT = "Sign Up";
 export const LOGIN_TEXT = "Log In";
 export const USERNAME_LABEL = "Username";
