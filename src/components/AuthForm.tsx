@@ -11,12 +11,14 @@ import {
   LOGIN_UI_DIRECTIONS,
 } from "../Constants";
 import { SignUp, LogIn } from "../api/UserApiClient";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
   const [form, setForm] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const navigation = useNavigate();
 
   const handleToggle = () => {
     setForm(!form);
@@ -31,6 +33,7 @@ const AuthForm = () => {
           : await LogIn(username, password);
         console.log(data);
         setError(null);
+        navigation("/chat");
       }
     } catch (error) {
       setError("An error occurred. Please try again.");
