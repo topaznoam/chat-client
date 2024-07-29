@@ -1,40 +1,70 @@
 import { Grid, TextField, Button, Avatar, Paper } from "@mui/material";
 import { useState } from "react";
 import {
-  LOGIN_TEXT,
+  SIGNUP_TEXT,
   USERNAME_LABEL,
   USERNAME_INSTRUCTIONS,
   PASSWORD_LABEL,
   PASSWORD_INSTRUCTIONS,
-  LOGIN_UI_DIRECTIONS,
-  SIGNUP_TEXT,
+  SIGNIN_UI_DIRECTIONS,
+  LOGIN_TEXT,
   ICON,
 } from "../Constants";
-import { LogIn } from "../api/UserApiClient";
+import { SignUp } from "../api/UserApiClient";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
-const LoginPage = () => {
+const SignUpPage = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const isPasswordStrong = (password: string): boolean => {
+    const lengthCheck = password.length >= 8;
+    const uppercaseCheck = /[A-Z]/.test(password);
+    const numberCheck = /\d/.test(password);
+    const specialCharCheck = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!lengthCheck) {
+      setError("Your password must be at least 8 characters long.");
+      return false;
+    }
+    if (!uppercaseCheck) {
+      setError("Your password must contain at least one uppercase letter.");
+      return false;
+    }
+    if (!numberCheck) {
+      setError("Your password must contain at least one number.");
+      return false;
+    }
+    if (!specialCharCheck) {
+      setError("Your password must contain at least one special character.");
+      return false;
+    }
+
+    setError(null);
+    return true;
+  };
+
+  const handleRegistration = async () => {
     try {
       if (username && password) {
-        const data = await LogIn(username, password);
-        console.log(data);
-        setError(null);
-        navigate("/chat");
+        if (isPasswordStrong(password)) {
+          const data = await SignUp(username, password);
+          console.log(data);
+          setError(null);
+          navigate("/chat");
+        } else {
+        }
       }
     } catch (error) {
-      setError("username or password uncurrect");
+      setError("username alredy exist");
     }
   };
 
   const handleToggle = () => {
-    navigate("/signup");
+    navigate("/login");
   };
 
   return (
@@ -44,7 +74,7 @@ const LoginPage = () => {
           <Avatar src={ICON} />
         </Grid>
         <Grid>
-          <h2>{LOGIN_TEXT}</h2>
+          <h2>{SIGNUP_TEXT}</h2>
           {error && <p style={{ color: "red" }}>{error}</p>}
           <TextField
             label={USERNAME_LABEL}
@@ -66,16 +96,16 @@ const LoginPage = () => {
             required
           />
           <Button
-            onClick={handleLogin}
+            onClick={handleRegistration}
             type="submit"
             color="primary"
             variant="contained"
             fullWidth
             sx={{ mb: 1 }}
           >
-            {LOGIN_TEXT}
+            {SIGNUP_TEXT}
           </Button>
-          <h4>{LOGIN_UI_DIRECTIONS}</h4>
+          <h4>{SIGNIN_UI_DIRECTIONS}</h4>
         </Grid>
         <Button
           onClick={handleToggle}
@@ -84,11 +114,11 @@ const LoginPage = () => {
           sx={{ mt: 2 }}
           fullWidth
         >
-          {SIGNUP_TEXT}
+          {LOGIN_TEXT}
         </Button>
       </Paper>
     </Grid>
   );
 };
 
-export default LoginPage;
+export default SignUpPage;
