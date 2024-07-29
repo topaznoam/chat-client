@@ -1,5 +1,4 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -14,4 +13,95 @@ body {
   height: auto;
   width: 280px;
   text-align: center;
+}
+
+.chatPaper {
+  padding: 2rem;
+  display: flex;
+  height: auto;
+  width: 1400px;
+  text-align: center;
+}
+
+.chatContainer {
+  height: 80vh;
+}
+
+.chatHeader {
+  padding: 10px;
+  background-color: #ffffff;
+  color: #3f50b5;
+}
+h4 {
+  margin-left: 10px;
+  margin: 5px;
+  font-weight: bold;
+}
+.chatTitle {
+  margin-left: 10px;
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+.MessagesBoxAndBar {
+  flex: 1;
+  padding: 10px;
+  height: 62vh;
+}
+.chatMessages {
+  flex: 1;
+  padding: 10px;
+  height: 62vh;
+  background-image: url("/img/backchat.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  border: 4px solid #3f50b5;
+}
+
+.chatInputContainer {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+}
+
+.chatInput {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.messagecontainer {
+  overflow: hidden;
+}
+
+.messageText {
+  font-size: 14px;
+}
+
+.messageTime {
+  font-size: 10px;
+  color: #999;
+  float: right;
+  display: block;
+}
+
+.chatMessage {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  max-width: 60%;
+  display: flex;
+}
+
+.sentMessage {
+  background-color: #3f50b5;
+  color: #ffffff;
+  text-align: right;
+  float: left;
+}
+
+.receivedMessage {
+  background-color: #ffffff;
+  color: #000000;
+  text-align: left;
+  float: right;
 }
