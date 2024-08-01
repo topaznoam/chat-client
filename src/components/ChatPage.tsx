@@ -7,6 +7,7 @@ import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
 import { currentUsername, setCurrentSocket } from "../globalvaryables";
 import { io, Socket } from "socket.io-client";
+import { getGroupMessages } from "../api/MessagesApiClient";
 
 export type SocketType = Socket<any, any>;
 
@@ -29,19 +30,39 @@ const ChatPage: React.FC = () => {
     { id: 4, name: "Group 4", icon: ICON },
     { id: 5, name: "Group 5", icon: ICON },
     { id: 6, name: "Group 6", icon: ICON },
-    { id: 1, name: "Group 1", icon: ICON },
-    { id: 2, name: "Group 2", icon: ICON },
-    { id: 3, name: "Group 3", icon: ICON },
-    { id: 4, name: "Group 4", icon: ICON },
-    { id: 5, name: "Group 5", icon: ICON },
-    { id: 6, name: "Group 6", icon: ICON },
+    { id: 7, name: "Group 1", icon: ICON },
+    { id: 8, name: "Group 2", icon: ICON },
+    { id: 9, name: "Group 3", icon: ICON },
+    { id: 10, name: "Group 4", icon: ICON },
+    { id: 11, name: "Group 5", icon: ICON },
+    { id: 12, name: "Group 6", icon: ICON },
   ];
 
   const createNewMessage = (newMessage: MessageProps) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
+  const getMessages = async (groupId: number) => {
+    try {
+      const messages = await getGroupMessages(groupId);
+      console.log(messages);
+      const currentgroupmessages = messages.map((message: MessageProps) => {
+        return {
+          id: message.id,
+          text: message.text,
+          time: message.time,
+          isSent: message.senderusername === currentUsername,
+          senderusername: message.senderusername,
+        };
+      });
+      console.log(currentgroupmessages);
+      setMessages(currentgroupmessages);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+    }
+  };
 
   useEffect(() => {
+    getMessages(1);
     const socket = openSocket();
 
     socket.on("onMessage", (content: { content: MessageProps }) => {
