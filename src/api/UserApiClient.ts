@@ -1,9 +1,9 @@
 import axios from "axios";
-import { ICON } from "../Constants";
+import { ICON, SERVER_URL } from "../Constants";
 
-export const SignUp = async (userUsername: string, userPassword: string) => {
+export const signUp = async (userUsername: string, userPassword: string) => {
   try {
-    const response = await axios.post("http://localhost:3000/users/signup", {
+    const response = await axios.post(`${SERVER_URL}/users/signup`, {
       username: userUsername,
       password: userPassword,
       avatar: ICON,
@@ -15,9 +15,9 @@ export const SignUp = async (userUsername: string, userPassword: string) => {
   }
 };
 
-export const LogIn = async (userUsername: string, userPassword: string) => {
+export const logIn = async (userUsername: string, userPassword: string) => {
   try {
-    const response = await axios.post("http://localhost:3000/users/login", {
+    const response = await axios.post(`${SERVER_URL}/users/login`, {
       username: userUsername,
       password: userPassword,
     });

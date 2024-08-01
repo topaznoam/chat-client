@@ -1,5 +1,7 @@
 import { Grid, TextField, Button, Avatar, Paper } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signUp } from "../api/UserApiClient";
 import {
   SIGNUP_TEXT,
   USERNAME_LABEL,
@@ -10,11 +12,10 @@ import {
   LOGIN_TEXT,
   ICON,
 } from "../Constants";
-import { SignUp } from "../api/UserApiClient";
-import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
 
-const SignUpPage = () => {
+const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -48,18 +49,19 @@ const SignUpPage = () => {
   };
 
   const handleRegistration = async () => {
-    try {
-      if (username && password) {
-        if (isPasswordStrong(password)) {
-          const data = await SignUp(username, password);
-          console.log(data);
-          setError(null);
-          navigate("/chat");
-        } else {
-        }
+    if (!username || !password) return;
+
+    if (isPasswordStrong(password)) {
+      try {
+        const data = await signUp(username, password);
+        setCurrentUserId(data);
+        console.log(data);
+        setError(null);
+        setCurrentUsername(username);
+        navigate("/chat");
+      } catch (error) {
+        setError("Username already exists");
       }
-    } catch (error) {
-      setError("username alredy exist");
     }
   };
 
