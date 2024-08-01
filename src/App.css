@@ -17,7 +17,7 @@ body {
 
 .chatPaper {
   padding: 2rem;
-  display: flex;
+  display: block;
   height: auto;
   width: 1400px;
   text-align: center;
@@ -32,23 +32,28 @@ body {
   background-color: #ffffff;
   color: #3f50b5;
 }
+
 h4 {
   margin-left: 10px;
   margin: 5px;
   font-weight: bold;
 }
+
 .chatTitle {
   margin-left: 10px;
   font-size: 2.2rem;
   font-weight: bold;
 }
+
 .MessagesBoxAndBar {
-  flex: 1;
+  display: block;
   padding: 10px;
   height: 62vh;
+  width: 124vh;
 }
+
 .chatMessages {
-  flex: 1;
+  display: block;
   padding: 10px;
   height: 62vh;
   background-image: url("/img/backchat.png");
@@ -56,11 +61,15 @@ h4 {
   background-position: center;
   border-radius: 20px;
   border: 4px solid #3f50b5;
+  overflow-y: auto;
+}
+::-webkit-scrollbar {
+  width: 0px;
 }
 
 .chatInputContainer {
-  padding: 10px;
-  border-top: 1px solid #ddd;
+  margin-top: 1%;
+  margin-bottom: 1%;
   background-color: white;
 }
 
@@ -69,7 +78,7 @@ h4 {
   margin-right: 10px;
 }
 
-.messagecontainer {
+.messageContainer {
   overflow: hidden;
 }
 
@@ -79,29 +88,42 @@ h4 {
 
 .messageTime {
   font-size: 10px;
-  color: #999;
+  color: #d2c9d2;
   float: right;
   display: block;
 }
 
 .chatMessage {
   padding: 10px;
-  margin: 5px 0;
+  margin: 5px;
   border-radius: 10px;
   max-width: 60%;
-  display: flex;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .sentMessage {
   background-color: #3f50b5;
   color: #ffffff;
-  text-align: right;
+  text-align: left;
   float: left;
+  clear: both;
 }
 
 .receivedMessage {
   background-color: #ffffff;
   color: #000000;
-  text-align: left;
+  text-align: right;
   float: right;
+  clear: both;
+}
+.groups {
+  display: block;
+  height: 62vh;
+  overflow-y: auto;
+}
+
+.group {
+  max-height: 60%;
 }

@@ -10,11 +10,12 @@ import {
   SIGNUP_TEXT,
   ICON,
 } from "../Constants";
-import { LogIn } from "../api/UserApiClient";
+import { logIn } from "../api/UserApiClient";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +24,15 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       if (username && password) {
-        const data = await LogIn(username, password);
+        const data = await logIn(username, password);
+        setCurrentUserId(data);
         console.log(data);
         setError(null);
+        setCurrentUsername(username);
         navigate("/chat");
       }
     } catch (error) {
-      setError("username or password uncurrect");
+      setError("Username or password incorrect");
     }
   };
 

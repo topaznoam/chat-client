@@ -2,29 +2,35 @@ import React from "react";
 import { Grid, Typography } from "@mui/material";
 import "../App.css";
 
-interface MessageProps {
+export type MessageProps = {
   id: number;
   text: string;
   time: string;
   isSent: boolean;
-}
+  senderusername: string | null;
+};
 
-const Message: React.FC<MessageProps> = ({ id, text, time, isSent }) => {
+const Message: React.FC<MessageProps> = (message: MessageProps) => {
   return (
-    <Grid>
-      <Grid className="messagecontainer">
+    <Grid sx={{ mt: 1 }}>
+      <Grid className="messageContainer">
         <Grid
           item
           className={`chatMessage ${
-            isSent ? "sentMessage" : "receivedMessage"
+            message.isSent ? "sentMessage" : "receivedMessage"
           }`}
-          id={id.toString()}
+          id={message.id.toString()}
         >
-          <Typography variant="body2" className="messageText">
-            {text}
+          <Grid>
+            <Typography variant="body2" className="messageText">
+              {message.senderusername}
+            </Typography>
+          </Grid>
+          <Typography variant="h5" className="messageText">
+            {message.text}
           </Typography>
           <Typography variant="caption" className="messageTime">
-            {new Date(time).toLocaleTimeString()}
+            {message.time}
           </Typography>
         </Grid>
       </Grid>

@@ -1,0 +1,21 @@
+import { Message } from "../components/MessageBar";
+import { currentSocket } from "../globalvaryables";
+
+export const sendMessage = async (msg: Message) => {
+  const message = {
+    data: msg.data,
+    user: msg.user,
+    group: 1,
+  };
+  console.log(message);
+  try {
+    console.log(currentSocket);
+    if (currentSocket) {
+      currentSocket.emit("newMessage", message);
+    } else {
+      console.error("Socket is not connected");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
