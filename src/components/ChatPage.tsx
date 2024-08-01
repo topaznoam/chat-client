@@ -5,9 +5,14 @@ import "../App.css";
 import Group from "./Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
-import { currentUsername, setCurrentSocket } from "../globalvaryables";
+import {
+  currentUserId,
+  currentUsername,
+  setCurrentSocket,
+} from "../globalvaryables";
 import { io, Socket } from "socket.io-client";
 import { getGroupMessages } from "../api/MessagesApiClient";
+import LockIcon from "@mui/icons-material/Lock";
 
 export type SocketType = Socket<any, any>;
 
@@ -91,33 +96,39 @@ const ChatPage: React.FC = () => {
 
   return (
     <Grid>
-      <Paper className="chatPaper">
-        <Grid container direction="column" className="chatContainer">
-          <Grid container alignItems="center" className="chatHeader">
-            <Avatar src={ICON} />
-            <div className="chatTitle">{currentGroup}</div>
-          </Grid>
-          <Grid container>
-            <Grid className="MessagesBoxAndBar">
-              <Grid className="chatMessages">
-                {messages.map((message: MessageProps) => (
-                  <Message key={message.id} {...message} />
+      {currentUserId ? (
+        <Paper className="chatPaper">
+          <Grid container direction="column" className="chatContainer">
+            <Grid container alignItems="center" className="chatHeader">
+              <Avatar src={ICON} />
+              <div className="chatTitle">{currentGroup}</div>
+            </Grid>
+            <Grid container>
+              <Grid className="MessagesBoxAndBar">
+                <Grid className="chatMessages">
+                  {messages.map((message: MessageProps) => (
+                    <Message key={message.id} {...message} />
+                  ))}
+                </Grid>
+                <MessageBar />
+              </Grid>
+              <Grid className="groups">
+                {groups.map((group) => (
+                  <Group
+                    key={group.id}
+                    onClick={() => handleGroupClick(group.name)}
+                    {...group}
+                  />
                 ))}
               </Grid>
-              <MessageBar />
-            </Grid>
-            <Grid className="groups">
-              {groups.map((group) => (
-                <Group
-                  key={group.id}
-                  onClick={() => handleGroupClick(group.name)}
-                  {...group}
-                />
-              ))}
             </Grid>
           </Grid>
+        </Paper>
+      ) : (
+        <Grid>
+          <LockIcon></LockIcon>
         </Grid>
-      </Paper>
+      )}
     </Grid>
   );
 };
