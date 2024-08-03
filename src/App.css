@@ -17,10 +17,7 @@ body {
 
 .chatPaper {
   padding: 2rem;
-  display: block;
-  height: auto;
-  width: 1400px;
-  text-align: center;
+  flex: 1;
 }
 
 .chatContainer {
@@ -47,7 +44,6 @@ h4 {
 
 .MessagesBoxAndBar {
   display: block;
-  padding: 10px;
   height: 62vh;
   width: 124vh;
 }
@@ -69,7 +65,7 @@ h4 {
 
 .chatInputContainer {
   margin-top: 1%;
-  margin-bottom: 1%;
+
   background-color: white;
 }
 
@@ -119,11 +115,15 @@ h4 {
   clear: both;
 }
 .groups {
-  display: block;
-  height: 62vh;
+  height: 60vh;
+  margin: 25px 5px;
   overflow-y: auto;
 }
-
-.group {
-  max-height: 60%;
+.users {
+  height: 60vh;
+  margin: 25px 5px;
+  overflow-y: auto;
+}
+.user {
+  display: flex;
 }

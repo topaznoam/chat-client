@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Grid, Paper } from "@mui/material";
+import { Avatar, Button, Grid, Paper } from "@mui/material";
 import { ICON, SERVER_URL } from "../Constants";
 import "../App.css";
 import Group from "./Group";
@@ -13,6 +13,8 @@ import {
 import { io, Socket } from "socket.io-client";
 import { getGroupMessages } from "../api/MessagesApiClient";
 import LockIcon from "@mui/icons-material/Lock";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import { useNavigate } from "react-router-dom";
 
 export type SocketType = Socket<any, any>;
 
@@ -27,6 +29,7 @@ const ChatPage: React.FC = () => {
   const [currentGroup, setCurrentGroup] = useState<string>(
     "WELCOME TO SMARTCHAT"
   );
+  const navigate = useNavigate();
 
   const groups = [
     { id: 1, name: "Group 1", icon: ICON },
@@ -93,24 +96,43 @@ const ChatPage: React.FC = () => {
     setCurrentGroup(groupName);
     setMessages([]);
   };
+  const handleAddGroupClick = () => {
+    navigate("/creategroup");
+  };
 
   return (
     <Grid>
       {currentUserId ? (
         <Paper className="chatPaper">
           <Grid container direction="column" className="chatContainer">
-            <Grid container alignItems="center" className="chatHeader">
-              <Avatar src={ICON} />
-              <div className="chatTitle">{currentGroup}</div>
-            </Grid>
-            <Grid container>
-              <Grid className="MessagesBoxAndBar">
-                <Grid className="chatMessages">
-                  {messages.map((message: MessageProps) => (
-                    <Message key={message.id} {...message} />
-                  ))}
+            <Grid>
+              <Grid container alignItems="center" className="chatHeader">
+                <Avatar src={ICON} />
+                <Grid className="chatTitle">{currentGroup}</Grid>
+              </Grid>
+              <Grid container>
+                <Grid className="MessagesBoxAndBar">
+                  <Grid className="chatMessages">
+                    {messages.map((message: MessageProps) => (
+                      <Message key={message.id} {...message} />
+                    ))}
+                  </Grid>
+                  <MessageBar />
                 </Grid>
-                <MessageBar />
+              </Grid>
+            </Grid>
+            <Grid>
+              <Grid>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  fullWidth
+                  onClick={handleAddGroupClick}
+                  sx={{ mt: 1 }}
+                >
+                  <GroupAddIcon />
+                </Button>
               </Grid>
               <Grid className="groups">
                 {groups.map((group) => (
