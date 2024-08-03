@@ -52,7 +52,6 @@ const ChatPage: React.FC = () => {
   const getMessages = async (groupId: number) => {
     try {
       const messages = await getGroupMessages(groupId);
-      console.log(messages);
       const currentgroupmessages = messages.map((message: MessageProps) => {
         return {
           id: message.id,
@@ -62,7 +61,6 @@ const ChatPage: React.FC = () => {
           senderusername: message.senderusername,
         };
       });
-      console.log(currentgroupmessages);
       setMessages(currentgroupmessages);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
@@ -74,7 +72,6 @@ const ChatPage: React.FC = () => {
     const socket = openSocket();
 
     socket.on("onMessage", (content: { content: MessageProps }) => {
-      console.log(content);
       const newMessage: MessageProps = {
         id: content.content.id,
         text: content.content.text,
@@ -82,7 +79,6 @@ const ChatPage: React.FC = () => {
         isSent: content.content.senderusername === currentUsername,
         senderusername: content.content.senderusername,
       };
-      console.log(newMessage);
       createNewMessage(newMessage);
     });
 

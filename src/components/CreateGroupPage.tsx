@@ -1,30 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Grid, Paper, TextField } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { ICON } from "../Constants";
 import { currentUserId } from "../globalvaryables";
 import User, { UserProps } from "./user";
 import { useNavigate } from "react-router-dom";
+import { getAllUsers } from "../api/UserApiClient";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
+  const [users, setUsers] = useState<UserProps[]>([]);
+
   const handleCreateClick = () => {
     navigate("/chat");
   };
-  const users: UserProps[] = [
-    { id: 1, name: "Group 1", icon: ICON, checkbox: false },
-    { id: 2, name: "Group 2", icon: ICON, checkbox: false },
-    { id: 3, name: "Group 3", icon: ICON, checkbox: false },
-    { id: 4, name: "Group 4", icon: ICON, checkbox: false },
-    { id: 5, name: "Group 5", icon: ICON, checkbox: false },
-    { id: 6, name: "Group 6", icon: ICON, checkbox: false },
-    { id: 7, name: "Group 7", icon: ICON, checkbox: false },
-    { id: 8, name: "Group 8", icon: ICON, checkbox: false },
-    { id: 9, name: "Group 9", icon: ICON, checkbox: false },
-    { id: 10, name: "Group 10", icon: ICON, checkbox: false },
-    { id: 11, name: "Group 11", icon: ICON, checkbox: false },
-    { id: 12, name: "Group 12", icon: ICON, checkbox: false },
-  ];
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const fetchedUsers = await getAllUsers();
+        console.log(fetchedUsers);
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <Grid>
@@ -33,7 +36,7 @@ const CreateGroupPage: React.FC = () => {
           <Grid container>
             <TextField
               id="standard-basic"
-              label="group name"
+              label=" Choose Group Name"
               variant="standard"
             />
           </Grid>

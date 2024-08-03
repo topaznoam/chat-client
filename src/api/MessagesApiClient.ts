@@ -18,9 +18,7 @@ export const sendMessage = async (msg: Message) => {
     user: msg.user,
     group: 1,
   };
-  console.log(message);
   try {
-    console.log(currentSocket);
     if (currentSocket) {
       currentSocket.emit("newMessage", message);
     } else {
