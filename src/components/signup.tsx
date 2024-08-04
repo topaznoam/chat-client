@@ -55,7 +55,6 @@ const SignUpPage: React.FC = () => {
       try {
         const data = await signUp(username, password);
         setCurrentUserId(data);
-        console.log(data);
         setError(null);
         setCurrentUsername(username);
         navigate("/chat");

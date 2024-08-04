@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Button, Grid, Paper } from "@mui/material";
 import { ICON, SERVER_URL } from "../Constants";
 import "../App.css";
-import Group from "./Group";
+import Group, { GroupProps } from "./Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
 import {
   currentUserId,
   currentUsername,
+  setCurrentGroupId,
   setCurrentSocket,
 } from "../globalvaryables";
 import { io, Socket } from "socket.io-client";
 import { getGroupMessages } from "../api/MessagesApiClient";
-import LockIcon from "@mui/icons-material/Lock";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
+import { getMyGroups } from "../api/GroupApiCliient";
+import BlockPage from "./BlockPage";
 
 export type SocketType = Socket<any, any>;
 
@@ -29,46 +31,42 @@ const ChatPage: React.FC = () => {
   const [currentGroup, setCurrentGroup] = useState<string>(
     "WELCOME TO SMARTCHAT"
   );
+  const [groups, setGroups] = useState<GroupProps[]>([]);
   const navigate = useNavigate();
-
-  const groups = [
-    { id: 1, name: "Group 1", icon: ICON },
-    { id: 2, name: "Group 2", icon: ICON },
-    { id: 3, name: "Group 3", icon: ICON },
-    { id: 4, name: "Group 4", icon: ICON },
-    { id: 5, name: "Group 5", icon: ICON },
-    { id: 6, name: "Group 6", icon: ICON },
-    { id: 7, name: "Group 1", icon: ICON },
-    { id: 8, name: "Group 2", icon: ICON },
-    { id: 9, name: "Group 3", icon: ICON },
-    { id: 10, name: "Group 4", icon: ICON },
-    { id: 11, name: "Group 5", icon: ICON },
-    { id: 12, name: "Group 6", icon: ICON },
-  ];
 
   const createNewMessage = (newMessage: MessageProps) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
+
   const getMessages = async (groupId: number) => {
     try {
       const messages = await getGroupMessages(groupId);
-      const currentgroupmessages = messages.map((message: MessageProps) => {
-        return {
-          id: message.id,
-          text: message.text,
-          time: message.time,
-          isSent: message.senderusername === currentUsername,
-          senderusername: message.senderusername,
-        };
-      });
+      const currentgroupmessages = messages.map((message: MessageProps) => ({
+        id: message.id,
+        text: message.text,
+        time: message.time,
+        isSent: message.senderusername === currentUsername,
+        senderusername: message.senderusername,
+      }));
       setMessages(currentgroupmessages);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     }
   };
 
+  const loadGroups = async () => {
+    try {
+      if (currentUserId) {
+        const groups = await getMyGroups(currentUserId);
+        setGroups(groups);
+      }
+    } catch (error) {
+      console.error("Failed to load groups:", error);
+    }
+  };
+
   useEffect(() => {
-    getMessages(1);
+    loadGroups();
     const socket = openSocket();
 
     socket.on("onMessage", (content: { content: MessageProps }) => {
@@ -88,10 +86,12 @@ const ChatPage: React.FC = () => {
     };
   }, []);
 
-  const handleGroupClick = (groupName: string) => {
+  const handleGroupClick = async (groupId: number, groupName: string) => {
+    setCurrentGroupId(groupId);
     setCurrentGroup(groupName);
-    setMessages([]);
+    await getMessages(groupId);
   };
+
   const handleAddGroupClick = () => {
     navigate("/creategroup");
   };
@@ -131,11 +131,11 @@ const ChatPage: React.FC = () => {
                 </Button>
               </Grid>
               <Grid className="groups">
-                {groups.map((group) => (
+                {groups.map((group: GroupProps) => (
                   <Group
                     key={group.id}
-                    onClick={() => handleGroupClick(group.name)}
                     {...group}
+                    onClick={() => handleGroupClick(group.id, group.name)}
                   />
                 ))}
               </Grid>
@@ -143,9 +143,7 @@ const ChatPage: React.FC = () => {
           </Grid>
         </Paper>
       ) : (
-        <Grid>
-          <LockIcon></LockIcon>
-        </Grid>
+        <BlockPage></BlockPage>
       )}
     </Grid>
   );

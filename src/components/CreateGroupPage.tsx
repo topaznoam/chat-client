@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Paper, TextField } from "@mui/material";
-import LockIcon from "@mui/icons-material/Lock";
 import { ICON } from "../Constants";
 import { currentUserId } from "../globalvaryables";
 import User, { UserProps } from "./user";
 import { useNavigate } from "react-router-dom";
 import { getAllUsers } from "../api/UserApiClient";
 import { createGroup } from "../api/GroupApiCliient";
+import BlockPage from "./BlockPage";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserProps[]>([]);
   const [groupName, setGroupName] = useState<string>("");
 
+  const handleCheckboxChange = (id: number) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === id ? { ...user, checkbox: !user.checkbox } : user
+      )
+    );
+  };
+
   const handleCreateClick = async () => {
-    const usersIdList = users.map((user) => user.id);
+    const usersIdList = users
+      .filter((user) => user.checkbox)
+      .map((user) => user.id);
     try {
+      console.log(usersIdList);
       await createGroup(groupName, usersIdList, ICON);
       navigate("/chat");
     } catch (error) {
@@ -27,7 +38,6 @@ const CreateGroupPage: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const fetchedUsers = await getAllUsers();
-        console.log(fetchedUsers);
         setUsers(fetchedUsers);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -52,7 +62,11 @@ const CreateGroupPage: React.FC = () => {
           </Grid>
           <Grid className="users">
             {users.map((user) => (
-              <User key={user.id} {...user} />
+              <User
+                key={user.id}
+                {...user}
+                onCheckboxChange={handleCheckboxChange}
+              />
             ))}
           </Grid>
           <Grid>
@@ -69,9 +83,7 @@ const CreateGroupPage: React.FC = () => {
           </Grid>
         </Paper>
       ) : (
-        <Grid>
-          <LockIcon />
-        </Grid>
+        <BlockPage></BlockPage>
       )}
     </Grid>
   );

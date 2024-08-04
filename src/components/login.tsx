@@ -26,7 +26,6 @@ const LoginPage: React.FC = () => {
       if (username && password) {
         const data = await logIn(username, password);
         setCurrentUserId(data);
-        console.log(data);
         setError(null);
         setCurrentUsername(username);
         navigate("/chat");
