@@ -6,13 +6,21 @@ import { currentUserId } from "../globalvaryables";
 import User, { UserProps } from "./user";
 import { useNavigate } from "react-router-dom";
 import { getAllUsers } from "../api/UserApiClient";
+import { createGroup } from "../api/GroupApiCliient";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserProps[]>([]);
+  const [groupName, setGroupName] = useState<string>("");
 
-  const handleCreateClick = () => {
-    navigate("/chat");
+  const handleCreateClick = async () => {
+    const usersIdList = users.map((user) => user.id);
+    try {
+      await createGroup(groupName, usersIdList, ICON);
+      navigate("/chat");
+    } catch (error) {
+      console.error("Error creating group:", error);
+    }
   };
 
   useEffect(() => {
@@ -36,8 +44,10 @@ const CreateGroupPage: React.FC = () => {
           <Grid container>
             <TextField
               id="standard-basic"
-              label=" Choose Group Name"
+              label="Choose Group Name"
               variant="standard"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
             />
           </Grid>
           <Grid className="users">
