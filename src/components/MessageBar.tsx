@@ -11,7 +11,7 @@ export type Message = {
   group: number | null;
 };
 
-const MessageBar = () => {
+const MessageBar: React.FC = () => {
   const [message, setMessage] = useState("");
 
   const handleSendClick = (text: string) => {
