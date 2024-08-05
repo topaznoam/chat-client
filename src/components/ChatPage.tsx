@@ -15,7 +15,7 @@ import { io, Socket } from "socket.io-client";
 import { getGroupMessages } from "../api/MessagesApiClient";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
-import { getMyGroups } from "../api/GroupApiCliient";
+import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
 import BlockPage from "./BlockPage";
 
 export type SocketType = Socket<any, any>;
@@ -90,6 +90,7 @@ const ChatPage: React.FC = () => {
     setCurrentGroupId(groupId);
     setCurrentGroup(groupName);
     await getMessages(groupId);
+    sendCurrentGroupId(groupId);
   };
 
   const handleAddGroupClick = () => {

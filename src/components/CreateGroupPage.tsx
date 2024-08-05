@@ -22,15 +22,17 @@ const CreateGroupPage: React.FC = () => {
   };
 
   const handleCreateClick = async () => {
-    const usersIdList = users
-      .filter((user) => user.checkbox)
-      .map((user) => user.id);
-    try {
-      console.log(usersIdList);
-      await createGroup(groupName, usersIdList, ICON);
-      navigate("/chat");
-    } catch (error) {
-      console.error("Error creating group:", error);
+    if (currentUserId) {
+      const usersIdList = [
+        currentUserId,
+        ...users.filter((user) => user.checkbox).map((user) => user.id),
+      ];
+      try {
+        await createGroup(groupName, usersIdList, ICON);
+        navigate("/chat");
+      } catch (error) {
+        console.error("Error creating group:", error);
+      }
     }
   };
 
@@ -38,7 +40,10 @@ const CreateGroupPage: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const fetchedUsers = await getAllUsers();
-        setUsers(fetchedUsers);
+        const filteredUsers = fetchedUsers.filter(
+          (user: UserProps) => user.id !== currentUserId
+        );
+        setUsers(filteredUsers);
       } catch (error) {
         console.error("Error fetching users:", error);
       }

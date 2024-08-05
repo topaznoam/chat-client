@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SERVER_URL } from "../Constants";
+import { currentSocket } from "../globalvaryables";
 
 export const createGroup = async (
   groupName: string,
@@ -26,5 +27,22 @@ export const getMyGroups = async (UserId: number) => {
   } catch (error) {
     console.error("Sign Up Error:", error);
     throw error;
+  }
+};
+
+export const sendCurrentGroupId = async (groupId: number) => {
+  if (groupId) {
+    const message = {
+      groupId: groupId,
+    };
+    try {
+      if (currentSocket) {
+        currentSocket.emit("newMessage", message);
+      } else {
+        console.error("Socket is not connected");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   }
 };
