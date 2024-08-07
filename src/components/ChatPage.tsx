@@ -17,6 +17,7 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
 import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
 import BlockPage from "./BlockPage";
+import AvatarImg from "./AvatarImg";
 
 export type SocketType = Socket<any, any>;
 
@@ -104,7 +105,7 @@ const ChatPage: React.FC = () => {
           <Grid container direction="column" className="chatContainer">
             <Grid>
               <Grid container alignItems="center" className="chatHeader">
-                <Avatar src={ICON} />
+                <AvatarImg></AvatarImg>
                 <Grid className="chatTitle">{currentGroup}</Grid>
               </Grid>
               <Grid container>

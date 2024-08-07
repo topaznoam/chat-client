@@ -14,6 +14,7 @@ import {
 } from "../Constants";
 import "../App.css";
 import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
+import AvatarImg from "./AvatarImg";
 
 const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -72,7 +73,7 @@ const SignUpPage: React.FC = () => {
     <Grid container className="root">
       <Paper className="loginPaper">
         <Grid container direction="column" alignItems="center">
-          <Avatar src={ICON} />
+          <AvatarImg></AvatarImg>
         </Grid>
         <Grid>
           <h2>{SIGNUP_TEXT}</h2>

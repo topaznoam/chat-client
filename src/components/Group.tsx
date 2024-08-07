@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar, Button, Grid } from "@mui/material";
+import AvatarImg from "./AvatarImg";
 
 export type GroupProps = {
   id: number;
@@ -13,7 +14,7 @@ const Group: React.FC<GroupProps> = ({ name, avatar, onClick }) => {
     <Grid container className="group">
       <Grid sx={{ m: 2 }}>
         <Button onClick={onClick}>
-          <Avatar src={avatar} />
+          <AvatarImg></AvatarImg>
           <h4>{name}</h4>
         </Button>
       </Grid>

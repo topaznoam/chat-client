@@ -14,6 +14,7 @@ import { logIn } from "../api/UserApiClient";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
+import AvatarImg from "./AvatarImg";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -43,7 +44,7 @@ const LoginPage: React.FC = () => {
     <Grid container className="root">
       <Paper className="loginPaper">
         <Grid container direction="column" alignItems="center">
-          <Avatar src={ICON} />
+          <AvatarImg></AvatarImg>
         </Grid>
         <Grid>
           <h2>{LOGIN_TEXT}</h2>
