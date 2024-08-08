@@ -1,4 +1,4 @@
-import { Grid, TextField, Button, Avatar, Paper } from "@mui/material";
+import { Grid, TextField, Button, Paper } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signUp } from "../api/UserApiClient";
@@ -10,11 +10,9 @@ import {
   PASSWORD_INSTRUCTIONS,
   SIGNIN_UI_DIRECTIONS,
   LOGIN_TEXT,
-  ICON,
 } from "../Constants";
 import "../App.css";
 import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
-import AvatarImg from "./AvatarImg";
 
 const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -72,9 +70,7 @@ const SignUpPage: React.FC = () => {
   return (
     <Grid container className="root">
       <Paper className="loginPaper">
-        <Grid container direction="column" alignItems="center">
-          <AvatarImg></AvatarImg>
-        </Grid>
+        <Grid container direction="column" alignItems="center"></Grid>
         <Grid>
           <h2>{SIGNUP_TEXT}</h2>
           {error && <p style={{ color: "red" }}>{error}</p>}

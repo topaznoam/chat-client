@@ -46,3 +46,24 @@ export const sendCurrentGroupId = async (groupId: number) => {
     }
   }
 };
+
+export const updateGroupImageInServer = async (
+  imageData: string,
+  groupId: number
+) => {
+  try {
+    console.log(1);
+    const response = await axios.put(
+      `${SERVER_URL}/groups/${groupId}/img`,
+      { imageSrc: imageData },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading image to server:", error);
+  }
+};

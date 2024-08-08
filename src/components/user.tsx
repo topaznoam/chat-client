@@ -20,7 +20,7 @@ const User: React.FC<UserProps> = ({
   return (
     <Grid className="user" sx={{ m: 2 }}>
       <Checkbox checked={checkbox} onChange={() => onCheckboxChange(id)} />
-      <AvatarImg></AvatarImg>
+      <AvatarImg img={icon} isUserImg={true} id={id}></AvatarImg>
       <h4>{name}</h4>
     </Grid>
   );

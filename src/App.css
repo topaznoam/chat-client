@@ -127,3 +127,9 @@ h4 {
 .user {
   display: flex;
 }
+.appcontainer {
+  display: flex;
+}
+.identity {
+  display: block;
+}

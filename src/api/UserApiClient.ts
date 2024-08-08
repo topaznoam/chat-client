@@ -37,3 +37,23 @@ export const logIn = async (userUsername: string, userPassword: string) => {
     throw error;
   }
 };
+
+export const updateUserImageInServer = async (
+  imageData: string,
+  userId: number
+) => {
+  try {
+    const response = await axios.put(
+      `${SERVER_URL}/users/${userId}/img`,
+      { imageSrc: imageData },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading image to server:", error);
+  }
+};

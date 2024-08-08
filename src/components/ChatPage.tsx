@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Grid, Paper } from "@mui/material";
-import { ICON, SERVER_URL } from "../Constants";
+import { Button, Grid, Paper } from "@mui/material";
+import { SERVER_URL } from "../Constants";
 import "../App.css";
 import Group, { GroupProps } from "./Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
 import {
   currentUserId,
+  currentUserImg,
   currentUsername,
   setCurrentGroupId,
   setCurrentSocket,
+  setCurrentUserId,
 } from "../globalvaryables";
 import { io, Socket } from "socket.io-client";
 import { getGroupMessages } from "../api/MessagesApiClient";
@@ -18,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
 import BlockPage from "./BlockPage";
 import AvatarImg from "./AvatarImg";
+import UserIdentity, { selfUserProps } from "./UserIdentity";
 
 export type SocketType = Socket<any, any>;
 
@@ -28,10 +31,9 @@ export const openSocket = (): SocketType => {
 };
 
 const ChatPage: React.FC = () => {
+  const [myUser, setUser] = useState<selfUserProps | null>(null);
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [currentGroup, setCurrentGroup] = useState<string>(
-    "WELCOME TO SMARTCHAT"
-  );
+  const [currentGroup, setCurrentGroup] = useState<GroupProps>();
   const [groups, setGroups] = useState<GroupProps[]>([]);
   const navigate = useNavigate();
 
@@ -67,31 +69,39 @@ const ChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadGroups();
-    const socket = openSocket();
-
-    socket.on("onMessage", (content: { content: MessageProps }) => {
-      const newMessage: MessageProps = {
-        id: content.content.id,
-        text: content.content.text,
-        time: content.content.time,
-        isSent: content.content.senderusername === currentUsername,
-        senderusername: content.content.senderusername,
+    if (currentUserId) {
+      const user: selfUserProps = {
+        myAvatar: currentUserImg,
+        myUserName: currentUsername,
       };
-      createNewMessage(newMessage);
-    });
+      setUser(user);
+      loadGroups();
+      const socket = openSocket();
+      socket.on("onMessage", (content: { content: MessageProps }) => {
+        const newMessage: MessageProps = {
+          id: content.content.id,
+          text: content.content.text,
+          time: content.content.time,
+          isSent: content.content.senderusername === currentUsername,
+          senderusername: content.content.senderusername,
+        };
+        createNewMessage(newMessage);
+      });
 
-    return () => {
-      socket.off("onMessage");
-      socket.close();
-    };
+      return () => {
+        socket.off("onMessage");
+        socket.close();
+      };
+    }
   }, []);
 
-  const handleGroupClick = async (groupId: number, groupName: string) => {
-    setCurrentGroupId(groupId);
-    setCurrentGroup(groupName);
-    await getMessages(groupId);
-    sendCurrentGroupId(groupId);
+  const handleGroupClick = (group: GroupProps) => {
+    (async () => {
+      setCurrentGroupId(group.id);
+      setCurrentGroup(group);
+      await getMessages(group.id);
+      sendCurrentGroupId(group.id);
+    })();
   };
 
   const handleAddGroupClick = () => {
@@ -101,49 +111,62 @@ const ChatPage: React.FC = () => {
   return (
     <Grid>
       {currentUserId ? (
-        <Paper className="chatPaper">
-          <Grid container direction="column" className="chatContainer">
-            <Grid>
-              <Grid container alignItems="center" className="chatHeader">
-                <AvatarImg></AvatarImg>
-                <Grid className="chatTitle">{currentGroup}</Grid>
-              </Grid>
-              <Grid container>
-                <Grid className="MessagesBoxAndBar">
-                  <Grid className="chatMessages">
-                    {messages.map((message: MessageProps) => (
-                      <Message key={message.id} {...message} />
-                    ))}
+        <Grid className="appcontainer">
+          <UserIdentity
+            myUserName={myUser?.myUserName}
+            myAvatar={myUser?.myAvatar}
+          ></UserIdentity>
+
+          <Paper className="chatPaper">
+            <Grid container direction="column" className="chatContainer">
+              <Grid>
+                {currentGroup ? (
+                  <Grid container alignItems="center" className="chatHeader">
+                    <AvatarImg
+                      img={currentGroup.avatar}
+                      isUserImg={false}
+                      id={currentGroup.id}
+                    ></AvatarImg>
+                    <Grid className="chatTitle">{currentGroup.name}</Grid>
                   </Grid>
-                  <MessageBar />
+                ) : null}
+                <Grid container>
+                  <Grid className="MessagesBoxAndBar">
+                    <Grid className="chatMessages">
+                      {messages.map((message: MessageProps) => (
+                        <Message key={message.id} {...message} />
+                      ))}
+                    </Grid>
+                    <MessageBar />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid>
+                <Grid>
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    onClick={handleAddGroupClick}
+                    sx={{ mt: 1 }}
+                  >
+                    <GroupAddIcon />
+                  </Button>
+                </Grid>
+                <Grid className="groups">
+                  {groups.map((group: GroupProps) => (
+                    <Group
+                      key={group.id}
+                      {...group}
+                      onClick={() => handleGroupClick(group)}
+                    />
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
-            <Grid>
-              <Grid>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  fullWidth
-                  onClick={handleAddGroupClick}
-                  sx={{ mt: 1 }}
-                >
-                  <GroupAddIcon />
-                </Button>
-              </Grid>
-              <Grid className="groups">
-                {groups.map((group: GroupProps) => (
-                  <Group
-                    key={group.id}
-                    {...group}
-                    onClick={() => handleGroupClick(group.id, group.name)}
-                  />
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Grid>
       ) : (
         <BlockPage></BlockPage>
       )}

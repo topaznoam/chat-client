@@ -1,20 +1,20 @@
 import React from "react";
-import { Avatar, Button, Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import AvatarImg from "./AvatarImg";
 
 export type GroupProps = {
   id: number;
   name: string;
   avatar: string;
-  onClick: () => void;
+  onClick: () => void | null;
 };
 
-const Group: React.FC<GroupProps> = ({ name, avatar, onClick }) => {
+const Group: React.FC<GroupProps> = ({ id, name, avatar, onClick }) => {
   return (
     <Grid container className="group">
       <Grid sx={{ m: 2 }}>
         <Button onClick={onClick}>
-          <AvatarImg></AvatarImg>
+          <AvatarImg img={avatar} isUserImg={false} id={id}></AvatarImg>
           <h4>{name}</h4>
         </Button>
       </Grid>
