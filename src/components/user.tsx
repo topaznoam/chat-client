@@ -1,5 +1,6 @@
 import React from "react";
-import { Avatar, Grid, Checkbox } from "@mui/material";
+import { Grid, Checkbox } from "@mui/material";
+import StaticAvatarImg from "./StaticAvatarImg";
 
 export type UserProps = {
   id: number;
@@ -19,7 +20,7 @@ const User: React.FC<UserProps> = ({
   return (
     <Grid className="user" sx={{ m: 2 }}>
       <Checkbox checked={checkbox} onChange={() => onCheckboxChange(id)} />
-      <Avatar src={icon}></Avatar>
+      <StaticAvatarImg img={icon} />
       <h4>{name}</h4>
     </Grid>
   );

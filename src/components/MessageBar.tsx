@@ -1,8 +1,8 @@
+import React, { useState } from "react";
 import { TextField, IconButton, Grid } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import "../App.css";
-import { currentUserId, currentGroupId } from "../globalvaryables";
-import { useState } from "react";
+import { useGlobalContext } from "../GlobalContext";
 import { sendMessage } from "../api/MessagesApiClient";
 
 export type Message = {
@@ -13,15 +13,19 @@ export type Message = {
 
 const MessageBar: React.FC = () => {
   const [message, setMessage] = useState("");
+  const { currentUser, currentGroup } = useGlobalContext();
+  const { currentSocket } = useGlobalContext();
 
   const handleSendClick = (text: string) => {
     if (text) {
       const msg: Message = {
         data: text,
-        user: currentUserId,
-        group: currentGroupId,
+        user: currentUser?.myId ?? null,
+        group: currentGroup?.id ?? null,
       };
-      sendMessage(msg);
+      currentSocket
+        ? sendMessage(msg, currentSocket)
+        : console.error("not connected");
       setMessage("");
     }
   };
@@ -33,7 +37,7 @@ const MessageBar: React.FC = () => {
         placeholder="Type a message..."
         className="chatInput"
         value={message}
-        onChange={(data) => setMessage(data.target.value)}
+        onChange={(e) => setMessage(e.target.value)}
       />
       <IconButton color="primary" onClick={() => handleSendClick(message)}>
         <SendIcon />

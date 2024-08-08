@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SERVER_URL } from "../Constants";
-import { currentSocket } from "../globalvaryables";
+import { SocketType } from "../GlobalContext";
 
 export const createGroup = async (
   groupName: string,
@@ -15,34 +15,52 @@ export const createGroup = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Sign Up Error:", error);
+    console.error("Error creating group:", error);
     throw error;
   }
 };
 
-export const getMyGroups = async (UserId: number) => {
+export const getMyGroups = async (userId: number) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/groups/${UserId}`);
+    const response = await axios.get(`${SERVER_URL}/groups/${userId}`);
     return response.data;
   } catch (error) {
-    console.error("Sign Up Error:", error);
+    console.error("Error fetching user groups:", error);
     throw error;
   }
 };
 
-export const sendCurrentGroupId = async (groupId: number) => {
+export const sendCurrentGroupId = async (
+  groupId: number,
+  socket: SocketType
+) => {
   if (groupId) {
-    const message = {
-      groupId: groupId,
-    };
+    const message = { groupId };
     try {
-      if (currentSocket) {
-        currentSocket.emit("newMessage", message);
-      } else {
-        console.error("Socket is not connected");
-      }
+      socket.emit("newMessage", message);
     } catch (error) {
       console.error("Error sending message:", error);
     }
+  }
+};
+
+export const updateGroupImageInServer = async (
+  imageData: string,
+  groupId: number
+) => {
+  try {
+    const response = await axios.put(
+      `${SERVER_URL}/groups/${groupId}/img`,
+      { imageSrc: imageData },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating group image:", error);
+    throw error;
   }
 };

@@ -30,7 +30,7 @@ const Message: React.FC<MessageProps> = (message: MessageProps) => {
             {message.text}
           </Typography>
           <Typography variant="caption" className="messageTime">
-            {message.time}
+            {`${message.time.split(":")[0]}:${message.time.split(":")[1]}`}
           </Typography>
         </Grid>
       </Grid>

@@ -1,39 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Grid, Paper } from "@mui/material";
-import { ICON, SERVER_URL } from "../Constants";
+import { Button, Grid, Paper } from "@mui/material";
+import { io } from "socket.io-client";
+import { SERVER_URL } from "../Constants";
 import "../App.css";
 import Group, { GroupProps } from "./Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
-import {
-  currentUserId,
-  currentUsername,
-  setCurrentGroupId,
-  setCurrentSocket,
-} from "../globalvaryables";
-import { io, Socket } from "socket.io-client";
-import { getGroupMessages } from "../api/MessagesApiClient";
+import { SocketType, useGlobalContext } from "../GlobalContext";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
 import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
 import BlockPage from "./BlockPage";
-
-export type SocketType = Socket<any, any>;
-
-export const openSocket = (): SocketType => {
-  const newSocket = io(SERVER_URL, { transports: ["websocket"] });
-  setCurrentSocket(newSocket);
-  return newSocket;
-};
+import UserIdentity from "./UserIdentity";
+import { getGroupMessages } from "../api/MessagesApiClient";
+import StaticAvatarImg from "./StaticAvatarImg";
 
 const ChatPage: React.FC = () => {
+  const {
+    currentUser,
+    currentGroup,
+    setCurrentGroup,
+    currentSocket,
+    setCurrentSocket,
+  } = useGlobalContext();
+
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [currentGroup, setCurrentGroup] = useState<string>(
-    "WELCOME TO SMARTCHAT"
-  );
   const [groups, setGroups] = useState<GroupProps[]>([]);
   const navigate = useNavigate();
 
+  const openSocket = (): SocketType => {
+    const newSocket = io(SERVER_URL, { transports: ["websocket"] });
+    setCurrentSocket(newSocket);
+    return newSocket;
+  };
   const createNewMessage = (newMessage: MessageProps) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
@@ -45,7 +44,7 @@ const ChatPage: React.FC = () => {
         id: message.id,
         text: message.text,
         time: message.time,
-        isSent: message.senderusername === currentUsername,
+        isSent: message.senderusername === currentUser?.myUserName,
         senderusername: message.senderusername,
       }));
       setMessages(currentgroupmessages);
@@ -56,8 +55,8 @@ const ChatPage: React.FC = () => {
 
   const loadGroups = async () => {
     try {
-      if (currentUserId) {
-        const groups = await getMyGroups(currentUserId);
+      if (currentUser?.myId) {
+        const groups = await getMyGroups(currentUser.myId);
         setGroups(groups);
       }
     } catch (error) {
@@ -66,31 +65,35 @@ const ChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadGroups();
-    const socket = openSocket();
+    if (currentUser) {
+      loadGroups();
+      const socket = openSocket();
+      socket.on("onMessage", (content: { content: MessageProps }) => {
+        const newMessage: MessageProps = {
+          id: content.content.id,
+          text: content.content.text,
+          time: content.content.time,
+          isSent: content.content.senderusername === currentUser?.myUserName,
+          senderusername: content.content.senderusername,
+        };
+        createNewMessage(newMessage);
+      });
 
-    socket.on("onMessage", (content: { content: MessageProps }) => {
-      const newMessage: MessageProps = {
-        id: content.content.id,
-        text: content.content.text,
-        time: content.content.time,
-        isSent: content.content.senderusername === currentUsername,
-        senderusername: content.content.senderusername,
+      return () => {
+        socket.off("onMessage");
+        socket.close();
       };
-      createNewMessage(newMessage);
-    });
-
-    return () => {
-      socket.off("onMessage");
-      socket.close();
-    };
+    }
   }, []);
 
-  const handleGroupClick = async (groupId: number, groupName: string) => {
-    setCurrentGroupId(groupId);
-    setCurrentGroup(groupName);
-    await getMessages(groupId);
-    sendCurrentGroupId(groupId);
+  const handleGroupClick = (group: GroupProps) => {
+    (async () => {
+      setCurrentGroup(group);
+      await getMessages(group.id);
+      currentSocket
+        ? sendCurrentGroupId(group.id, currentSocket)
+        : console.error("not connected");
+    })();
   };
 
   const handleAddGroupClick = () => {
@@ -99,52 +102,57 @@ const ChatPage: React.FC = () => {
 
   return (
     <Grid>
-      {currentUserId ? (
-        <Paper className="chatPaper">
-          <Grid container direction="column" className="chatContainer">
-            <Grid>
-              <Grid container alignItems="center" className="chatHeader">
-                <Avatar src={ICON} />
-                <Grid className="chatTitle">{currentGroup}</Grid>
-              </Grid>
-              <Grid container>
-                <Grid className="MessagesBoxAndBar">
-                  <Grid className="chatMessages">
-                    {messages.map((message: MessageProps) => (
-                      <Message key={message.id} {...message} />
-                    ))}
+      {currentUser ? (
+        <Grid className="appcontainer">
+          <UserIdentity />
+          <Paper className="chatPaper">
+            <Grid container direction="column" className="chatContainer">
+              <Grid>
+                {currentGroup ? (
+                  <Grid container alignItems="center" className="chatHeader">
+                    <StaticAvatarImg img={currentGroup.avatar} />
+                    <Grid className="chatTitle">{currentGroup.name}</Grid>
                   </Grid>
-                  <MessageBar />
+                ) : null}
+                <Grid container>
+                  <Grid className="MessagesBoxAndBar">
+                    <Grid className="chatMessages">
+                      {messages.map((message: MessageProps) => (
+                        <Message key={message.id} {...message} />
+                      ))}
+                    </Grid>
+                    <MessageBar />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid>
+                <Grid>
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    onClick={handleAddGroupClick}
+                    sx={{ mt: 1 }}
+                  >
+                    <GroupAddIcon />
+                  </Button>
+                </Grid>
+                <Grid className="groups">
+                  {groups.map((group: GroupProps) => (
+                    <Group
+                      key={group.id}
+                      {...group}
+                      onClick={() => handleGroupClick(group)}
+                    />
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
-            <Grid>
-              <Grid>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  fullWidth
-                  onClick={handleAddGroupClick}
-                  sx={{ mt: 1 }}
-                >
-                  <GroupAddIcon />
-                </Button>
-              </Grid>
-              <Grid className="groups">
-                {groups.map((group: GroupProps) => (
-                  <Group
-                    key={group.id}
-                    {...group}
-                    onClick={() => handleGroupClick(group.id, group.name)}
-                  />
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Grid>
       ) : (
-        <BlockPage></BlockPage>
+        <BlockPage />
       )}
     </Grid>
   );

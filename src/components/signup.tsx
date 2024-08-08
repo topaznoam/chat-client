@@ -1,7 +1,8 @@
-import { Grid, TextField, Button, Avatar, Paper } from "@mui/material";
+import { Grid, TextField, Button, Paper } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signUp } from "../api/UserApiClient";
+import { useGlobalContext } from "../GlobalContext";
 import {
   SIGNUP_TEXT,
   USERNAME_LABEL,
@@ -13,13 +14,13 @@ import {
   ICON,
 } from "../Constants";
 import "../App.css";
-import { setCurrentUserId, setCurrentUsername } from "../globalvaryables";
 
 const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setCurrentUser } = useGlobalContext(); // Use context for global state management
 
   const isPasswordStrong = (password: string): boolean => {
     const lengthCheck = password.length >= 8;
@@ -49,14 +50,21 @@ const SignUpPage: React.FC = () => {
   };
 
   const handleRegistration = async () => {
-    if (!username || !password) return;
+    if (!username || !password) {
+      setError("Please enter both username and password.");
+      return;
+    }
 
     if (isPasswordStrong(password)) {
       try {
         const data = await signUp(username, password);
-        setCurrentUserId(data);
+        const user = {
+          myId: data.id,
+          myAvatar: ICON,
+          myUserName: username,
+        };
+        setCurrentUser(user);
         setError(null);
-        setCurrentUsername(username);
         navigate("/chat");
       } catch (error) {
         setError("Username already exists");
@@ -69,54 +77,68 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <Grid container className="root">
-      <Paper className="loginPaper">
-        <Grid container direction="column" alignItems="center">
-          <Avatar src={ICON} />
+    <Grid
+      container
+      className="root"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Paper className="loginPaper" elevation={3}>
+        <Grid container direction="column" alignItems="center" spacing={2}>
+          <Grid item>
+            <h2>{SIGNUP_TEXT}</h2>
+          </Grid>
+          <Grid item>{error && <p style={{ color: "red" }}>{error}</p>}</Grid>
+          <Grid item>
+            <TextField
+              label={USERNAME_LABEL}
+              placeholder={USERNAME_INSTRUCTIONS}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ mb: 1 }}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label={PASSWORD_LABEL}
+              placeholder={PASSWORD_INSTRUCTIONS}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 1 }}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={handleRegistration}
+              type="button"
+              color="primary"
+              variant="contained"
+              fullWidth
+              sx={{ mb: 1 }}
+            >
+              {SIGNUP_TEXT}
+            </Button>
+          </Grid>
+          <Grid item>
+            <h4>{SIGNIN_UI_DIRECTIONS}</h4>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={handleToggle}
+              color="secondary"
+              variant="text"
+              sx={{ mt: 2 }}
+              fullWidth
+            >
+              {LOGIN_TEXT}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid>
-          <h2>{SIGNUP_TEXT}</h2>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <TextField
-            label={USERNAME_LABEL}
-            placeholder={USERNAME_INSTRUCTIONS}
-            value={username}
-            onChange={(change) => setUsername(change.target.value)}
-            sx={{ mb: 1 }}
-            fullWidth
-            required
-          />
-          <TextField
-            label={PASSWORD_LABEL}
-            placeholder={PASSWORD_INSTRUCTIONS}
-            type="password"
-            value={password}
-            onChange={(change) => setPassword(change.target.value)}
-            sx={{ mb: 1 }}
-            fullWidth
-            required
-          />
-          <Button
-            onClick={handleRegistration}
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth
-            sx={{ mb: 1 }}
-          >
-            {SIGNUP_TEXT}
-          </Button>
-          <h4>{SIGNIN_UI_DIRECTIONS}</h4>
-        </Grid>
-        <Button
-          onClick={handleToggle}
-          color="secondary"
-          variant="text"
-          sx={{ mt: 2 }}
-          fullWidth
-        >
-          {LOGIN_TEXT}
-        </Button>
       </Paper>
     </Grid>
   );
