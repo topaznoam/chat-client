@@ -1,42 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Paper } from "@mui/material";
+import { io } from "socket.io-client";
 import { SERVER_URL } from "../Constants";
 import "../App.css";
 import Group, { GroupProps } from "./Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
-import {
-  currentUserId,
-  currentUserImg,
-  currentUsername,
-  setCurrentGroupId,
-  setCurrentSocket,
-  setCurrentUserId,
-} from "../globalvaryables";
-import { io, Socket } from "socket.io-client";
-import { getGroupMessages } from "../api/MessagesApiClient";
+import { SocketType, useGlobalContext } from "../GlobalContext";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
 import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
 import BlockPage from "./BlockPage";
-import AvatarImg from "./AvatarImg";
-import UserIdentity, { selfUserProps } from "./UserIdentity";
-
-export type SocketType = Socket<any, any>;
-
-export const openSocket = (): SocketType => {
-  const newSocket = io(SERVER_URL, { transports: ["websocket"] });
-  setCurrentSocket(newSocket);
-  return newSocket;
-};
+import UserIdentity from "./UserIdentity";
+import { getGroupMessages } from "../api/MessagesApiClient";
+import StaticAvatarImg from "./StaticAvatarImg";
 
 const ChatPage: React.FC = () => {
-  const [myUser, setUser] = useState<selfUserProps | null>(null);
+  const {
+    currentUser,
+    currentGroup,
+    setCurrentGroup,
+    currentSocket,
+    setCurrentSocket,
+  } = useGlobalContext();
+
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [currentGroup, setCurrentGroup] = useState<GroupProps>();
   const [groups, setGroups] = useState<GroupProps[]>([]);
   const navigate = useNavigate();
 
+  const openSocket = (): SocketType => {
+    const newSocket = io(SERVER_URL, { transports: ["websocket"] });
+    setCurrentSocket(newSocket);
+    return newSocket;
+  };
   const createNewMessage = (newMessage: MessageProps) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
@@ -48,7 +44,7 @@ const ChatPage: React.FC = () => {
         id: message.id,
         text: message.text,
         time: message.time,
-        isSent: message.senderusername === currentUsername,
+        isSent: message.senderusername === currentUser?.myUserName,
         senderusername: message.senderusername,
       }));
       setMessages(currentgroupmessages);
@@ -59,8 +55,8 @@ const ChatPage: React.FC = () => {
 
   const loadGroups = async () => {
     try {
-      if (currentUserId) {
-        const groups = await getMyGroups(currentUserId);
+      if (currentUser?.myId) {
+        const groups = await getMyGroups(currentUser.myId);
         setGroups(groups);
       }
     } catch (error) {
@@ -69,12 +65,7 @@ const ChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (currentUserId) {
-      const user: selfUserProps = {
-        myAvatar: currentUserImg,
-        myUserName: currentUsername,
-      };
-      setUser(user);
+    if (currentUser) {
       loadGroups();
       const socket = openSocket();
       socket.on("onMessage", (content: { content: MessageProps }) => {
@@ -82,7 +73,7 @@ const ChatPage: React.FC = () => {
           id: content.content.id,
           text: content.content.text,
           time: content.content.time,
-          isSent: content.content.senderusername === currentUsername,
+          isSent: content.content.senderusername === currentUser?.myUserName,
           senderusername: content.content.senderusername,
         };
         createNewMessage(newMessage);
@@ -97,10 +88,11 @@ const ChatPage: React.FC = () => {
 
   const handleGroupClick = (group: GroupProps) => {
     (async () => {
-      setCurrentGroupId(group.id);
       setCurrentGroup(group);
       await getMessages(group.id);
-      sendCurrentGroupId(group.id);
+      currentSocket
+        ? sendCurrentGroupId(group.id, currentSocket)
+        : console.error("not connected");
     })();
   };
 
@@ -110,23 +102,15 @@ const ChatPage: React.FC = () => {
 
   return (
     <Grid>
-      {currentUserId ? (
+      {currentUser ? (
         <Grid className="appcontainer">
-          <UserIdentity
-            myUserName={myUser?.myUserName}
-            myAvatar={myUser?.myAvatar}
-          ></UserIdentity>
-
+          <UserIdentity />
           <Paper className="chatPaper">
             <Grid container direction="column" className="chatContainer">
               <Grid>
                 {currentGroup ? (
                   <Grid container alignItems="center" className="chatHeader">
-                    <AvatarImg
-                      img={currentGroup.avatar}
-                      isUserImg={false}
-                      id={currentGroup.id}
-                    ></AvatarImg>
+                    <StaticAvatarImg img={currentGroup.avatar} />
                     <Grid className="chatTitle">{currentGroup.name}</Grid>
                   </Grid>
                 ) : null}
@@ -168,7 +152,7 @@ const ChatPage: React.FC = () => {
           </Paper>
         </Grid>
       ) : (
-        <BlockPage></BlockPage>
+        <BlockPage />
       )}
     </Grid>
   );

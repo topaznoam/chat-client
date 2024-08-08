@@ -11,29 +11,31 @@ import {
 } from "../Constants";
 import { logIn } from "../api/UserApiClient";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../GlobalContext";
 import "../App.css";
-import {
-  setCurrentUserId,
-  setCurrentUserImg,
-  setCurrentUsername,
-} from "../globalvaryables";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setCurrentUser } = useGlobalContext();
 
   const handleLogin = async () => {
     try {
       if (username && password) {
         const data = await logIn(username, password);
         console.log(data);
-        setCurrentUserId(data.id);
+        const user = {
+          myId: data.id,
+          myAvatar: data.avatar,
+          myUserName: data.username,
+        };
+        setCurrentUser(user);
         setError(null);
-        setCurrentUsername(data.username);
-        setCurrentUserImg(data.avatar);
         navigate("/chat");
+      } else {
+        setError("Please enter both username and password.");
       }
     } catch (error) {
       setError("Username or password incorrect");
@@ -45,52 +47,68 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Grid container className="root">
-      <Paper className="loginPaper">
-        <Grid container direction="column" alignItems="center"></Grid>
-        <Grid>
-          <h2>{LOGIN_TEXT}</h2>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <TextField
-            label={USERNAME_LABEL}
-            placeholder={USERNAME_INSTRUCTIONS}
-            value={username}
-            onChange={(change) => setUsername(change.target.value)}
-            sx={{ mb: 1 }}
-            fullWidth
-            required
-          />
-          <TextField
-            label={PASSWORD_LABEL}
-            placeholder={PASSWORD_INSTRUCTIONS}
-            type="password"
-            value={password}
-            onChange={(change) => setPassword(change.target.value)}
-            sx={{ mb: 1 }}
-            fullWidth
-            required
-          />
-          <Button
-            onClick={handleLogin}
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth
-            sx={{ mb: 1 }}
-          >
-            {LOGIN_TEXT}
-          </Button>
-          <h4>{LOGIN_UI_DIRECTIONS}</h4>
+    <Grid
+      container
+      className="root"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Paper className="loginPaper" elevation={3}>
+        <Grid container direction="column" alignItems="center" spacing={2}>
+          <Grid item>
+            <h2>{LOGIN_TEXT}</h2>
+          </Grid>
+          <Grid item>{error && <p style={{ color: "red" }}>{error}</p>}</Grid>
+          <Grid item>
+            <TextField
+              label={USERNAME_LABEL}
+              placeholder={USERNAME_INSTRUCTIONS}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ mb: 1 }}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label={PASSWORD_LABEL}
+              placeholder={PASSWORD_INSTRUCTIONS}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 1 }}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={handleLogin}
+              type="button" // Changed to "button" to prevent form submission
+              color="primary"
+              variant="contained"
+              fullWidth
+              sx={{ mb: 1 }}
+            >
+              {LOGIN_TEXT}
+            </Button>
+          </Grid>
+          <Grid item>
+            <h4>{LOGIN_UI_DIRECTIONS}</h4>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={handleToggle}
+              color="secondary"
+              variant="text"
+              sx={{ mt: 2 }}
+              fullWidth
+            >
+              {SIGNUP_TEXT}
+            </Button>
+          </Grid>
         </Grid>
-        <Button
-          onClick={handleToggle}
-          color="secondary"
-          variant="text"
-          sx={{ mt: 2 }}
-          fullWidth
-        >
-          {SIGNUP_TEXT}
-        </Button>
       </Paper>
     </Grid>
   );

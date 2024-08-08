@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Message } from "../components/MessageBar";
-import { currentSocket } from "../globalvaryables";
 import { SERVER_URL } from "../Constants";
+import { SocketType } from "../GlobalContext";
 
 export const getGroupMessages = async (groupId: number) => {
   try {
@@ -12,7 +12,8 @@ export const getGroupMessages = async (groupId: number) => {
     throw error;
   }
 };
-export const sendMessage = async (msg: Message) => {
+
+export const sendMessage = async (msg: Message, socket: SocketType) => {
   if (msg.group && msg.data && msg.user) {
     const message = {
       data: msg.data,
@@ -20,13 +21,11 @@ export const sendMessage = async (msg: Message) => {
       group: msg.group,
     };
     try {
-      if (currentSocket) {
-        currentSocket.emit("newMessage", message);
-      } else {
-        console.error("Socket is not connected");
-      }
+      socket.emit("newMessage", message);
     } catch (error) {
       console.error("Error sending message:", error);
     }
+  } else {
+    console.error("Message details are incomplete");
   }
 };

@@ -1,53 +1,51 @@
 import React from "react";
 import { Button, Grid, Paper, Typography } from "@mui/material";
 import AvatarImg from "./AvatarImg";
-import { currentUserId, resetglobals } from "../globalvaryables";
+import { useGlobalContext } from "../GlobalContext";
 import { useNavigate } from "react-router-dom";
-
 import BlockPage from "./BlockPage";
 
-export type selfUserProps = {
-  myAvatar: string | null;
-  myUserName: string | null;
-};
-
-const User: React.FC<selfUserProps> = (user: selfUserProps) => {
+const User: React.FC = () => {
   const navigate = useNavigate();
+  const { currentUser, setCurrentUser, setCurrentGroup, setCurrentSocket } =
+    useGlobalContext();
 
   const handleLogoutClick = () => {
-    resetglobals();
+    setCurrentUser(null);
+    setCurrentGroup(null);
+    setCurrentSocket(null);
     navigate("/login");
   };
 
+  if (!currentUser) {
+    return <BlockPage />;
+  }
+
   return (
     <Grid>
-      {currentUserId ? (
-        <Paper sx={{ mr: 2 }}>
-          <Grid item>
-            {user.myAvatar ? (
-              <AvatarImg
-                img={user.myAvatar}
-                isUserImg={true}
-                id={currentUserId}
-              />
-            ) : null}
+      <Paper sx={{ mr: 2 }}>
+        <Grid item>
+          {currentUser.myAvatar ? (
+            <AvatarImg
+              img={currentUser.myAvatar}
+              isUserImg={true}
+              id={currentUser.myId}
+            />
+          ) : null}
 
-            <Typography variant="h4" sx={{ m: 1 }}>
-              {`Welcome back ${user.myUserName}`}
-            </Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              sx={{ m: 1 }}
-              onClick={handleLogoutClick}
-            >
-              Log Out
-            </Button>
-          </Grid>
-        </Paper>
-      ) : (
-        <BlockPage />
-      )}
+          <Typography variant="h4" sx={{ m: 1 }}>
+            {`Welcome back ${currentUser.myUserName}`}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{ m: 1 }}
+            onClick={handleLogoutClick}
+          >
+            Log Out
+          </Button>
+        </Grid>
+      </Paper>
     </Grid>
   );
 };

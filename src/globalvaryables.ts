@@ -1,4 +1,4 @@
-import { SocketType } from "./components/ChatPage";
+import { SocketType } from "./GlobalContext";
 
 export let currentUserId: number | null = null;
 export let currentGroupId: number | null = null;
