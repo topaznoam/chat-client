@@ -88,6 +88,7 @@ const ChatPage: React.FC = () => {
 
   const handleGroupClick = (group: GroupProps) => {
     (async () => {
+      loadGroups();
       setCurrentGroup(group);
       await getMessages(group.id);
       currentSocket
