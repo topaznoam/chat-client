@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Avatar, Button, Grid } from "@mui/material";
 import { updateGroupImageInServer } from "../api/GroupApiCliient";
 import { updateUserImageInServer } from "../api/UserApiClient";
@@ -26,6 +26,12 @@ const AvatarImg: React.FC<AvatarImgProps> = (img: AvatarImgProps) => {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    if (!img.isUserImg) {
+      setImageSrc(img.img);
+    }
+  }, [img]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();

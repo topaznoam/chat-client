@@ -20,7 +20,7 @@ const SignUpPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setCurrentUser } = useGlobalContext(); // Use context for global state management
+  const { setCurrentUser } = useGlobalContext();
 
   const isPasswordStrong = (password: string): boolean => {
     const lengthCheck = password.length >= 8;

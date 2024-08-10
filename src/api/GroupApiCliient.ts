@@ -49,15 +49,9 @@ export const updateGroupImageInServer = async (
   groupId: number
 ) => {
   try {
-    const response = await axios.put(
-      `${SERVER_URL}/groups/${groupId}/img`,
-      { imageSrc: imageData },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.put(`${SERVER_URL}/groups/${groupId}/img`, {
+      imageSrc: imageData,
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating group image:", error);
