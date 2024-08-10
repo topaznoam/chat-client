@@ -43,15 +43,9 @@ export const updateUserImageInServer = async (
   userId: number
 ) => {
   try {
-    const response = await axios.put(
-      `${SERVER_URL}/users/${userId}/img`,
-      { imageSrc: imageData },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.put(`${SERVER_URL}/users/${userId}/img`, {
+      imageSrc: imageData,
+    });
     return response.data;
   } catch (error) {
     console.error("Error uploading image to server:", error);
