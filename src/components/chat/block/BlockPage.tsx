@@ -1,5 +1,5 @@
 import { Grid, Paper, Typography } from "@mui/material";
-import { BLOCK_MESSAGE } from "../Constants";
+import { BLOCK_MESSAGE } from "../../../Constants";
 import LockIcon from "@mui/icons-material/Lock";
 
 const BlockPage: React.FC = () => {

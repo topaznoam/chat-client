@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Avatar, Button, Grid } from "@mui/material";
-import { updateGroupImageInServer } from "../api/GroupApiCliient";
-import { updateUserImageInServer } from "../api/UserApiClient";
+import { updateGroupImageInServer } from "../../../api/GroupApiCliient";
+import { updateUserImageInServer } from "../../../api/UserApiClient";
 
 type AvatarImgProps = {
   id: number;

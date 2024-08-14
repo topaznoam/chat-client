@@ -1,8 +1,8 @@
 import { Grid, TextField, Button, Paper } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signUp } from "../api/UserApiClient";
-import { useGlobalContext } from "../GlobalContext";
+import { signUp } from "../../api/UserApiClient";
+import { useGlobalContext } from "../../GlobalContext";
 import {
   SIGNUP_TEXT,
   USERNAME_LABEL,
@@ -12,8 +12,8 @@ import {
   SIGNIN_UI_DIRECTIONS,
   LOGIN_TEXT,
   ICON,
-} from "../Constants";
-import "../App.css";
+} from "../../Constants";
+import "./registration.css";
 
 const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -95,8 +95,6 @@ const SignUpPage: React.FC = () => {
               placeholder={USERNAME_INSTRUCTIONS}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              sx={{ mb: 1 }}
-              fullWidth
               required
             />
           </Grid>
@@ -107,8 +105,6 @@ const SignUpPage: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 1 }}
-              fullWidth
               required
             />
           </Grid>
@@ -118,8 +114,6 @@ const SignUpPage: React.FC = () => {
               type="button"
               color="primary"
               variant="contained"
-              fullWidth
-              sx={{ mb: 1 }}
             >
               {SIGNUP_TEXT}
             </Button>
@@ -128,13 +122,7 @@ const SignUpPage: React.FC = () => {
             <h4>{SIGNIN_UI_DIRECTIONS}</h4>
           </Grid>
           <Grid item>
-            <Button
-              onClick={handleToggle}
-              color="secondary"
-              variant="text"
-              sx={{ mt: 2 }}
-              fullWidth
-            >
+            <Button onClick={handleToggle} color="secondary" variant="text">
               {LOGIN_TEXT}
             </Button>
           </Grid>

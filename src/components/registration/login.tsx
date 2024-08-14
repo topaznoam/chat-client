@@ -8,11 +8,11 @@ import {
   PASSWORD_INSTRUCTIONS,
   LOGIN_UI_DIRECTIONS,
   SIGNUP_TEXT,
-} from "../Constants";
-import { logIn } from "../api/UserApiClient";
+} from "../../Constants";
+import { logIn } from "../../api/UserApiClient";
 import { useNavigate } from "react-router-dom";
-import { useGlobalContext } from "../GlobalContext";
-import "../App.css";
+import { useGlobalContext } from "../../GlobalContext";
+import "./registration.css";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -65,8 +65,6 @@ const LoginPage: React.FC = () => {
               placeholder={USERNAME_INSTRUCTIONS}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              sx={{ mb: 1 }}
-              fullWidth
               required
             />
           </Grid>
@@ -77,19 +75,15 @@ const LoginPage: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 1 }}
-              fullWidth
               required
             />
           </Grid>
           <Grid item>
             <Button
               onClick={handleLogin}
-              type="button" // Changed to "button" to prevent form submission
+              type="button"
               color="primary"
               variant="contained"
-              fullWidth
-              sx={{ mb: 1 }}
             >
               {LOGIN_TEXT}
             </Button>
@@ -98,13 +92,7 @@ const LoginPage: React.FC = () => {
             <h4>{LOGIN_UI_DIRECTIONS}</h4>
           </Grid>
           <Grid item>
-            <Button
-              onClick={handleToggle}
-              color="secondary"
-              variant="text"
-              sx={{ mt: 2 }}
-              fullWidth
-            >
+            <Button onClick={handleToggle} color="secondary" variant="text">
               {SIGNUP_TEXT}
             </Button>
           </Grid>

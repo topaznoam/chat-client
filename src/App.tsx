@@ -1,8 +1,8 @@
-import ChatPage from "./components/ChatPage";
+import ChatPage from "./components/chat/chat/ChatPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import LoginPage from "./components/login";
-import SignUpPage from "./components/signup";
-import CreateGroupPage from "./components/CreateGroupPage";
+import LoginPage from "./components/registration/login";
+import SignUpPage from "./components/registration/signup";
+import CreateGroupPage from "./components/chat/group/CreateGroupPage";
 
 function App() {
   return (

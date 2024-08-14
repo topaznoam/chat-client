@@ -1,0 +1,147 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+body {
+  background-color: #3f50b5;
+}
+img {
+  width: 400px;
+  height: 400px;
+}
+.addpaddingclass {
+  padding: 10px;
+}
+.identitypaper {
+  margin-right: 10px;
+}
+.user {
+  margin: 20px;
+}
+.chatPaper {
+  padding: 2rem;
+  flex: 1;
+}
+
+.chatContainer {
+  height: 80vh;
+}
+
+.chatHeader {
+  padding: 10px;
+  background-color: #ffffff;
+  color: #3f50b5;
+}
+
+.chatTitle {
+  margin-left: 10px;
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.MessagesBoxAndBar {
+  display: block;
+  height: 62vh;
+  width: 124vh;
+}
+
+.chatMessages {
+  display: block;
+  padding: 10px;
+  height: 62vh;
+  background-image: url("/img/backchat.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  border: 4px solid #3f50b5;
+  overflow-y: auto;
+}
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+.chatInputContainer {
+  margin-top: 1%;
+
+  background-color: white;
+}
+
+.chatInput {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.messageContainer {
+  overflow: hidden;
+}
+
+.messageText {
+  font-size: 14px;
+}
+
+.messageTime {
+  font-size: 10px;
+  color: #d2c9d2;
+  float: right;
+  display: block;
+}
+
+.chatMessage {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  max-width: 60%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.sentMessage {
+  background-color: #3f50b5;
+  color: #ffffff;
+  text-align: left;
+  float: left;
+  clear: both;
+}
+
+.receivedMessage {
+  background-color: #ffffff;
+  color: #000000;
+  text-align: right;
+  float: right;
+  clear: both;
+}
+
+.addgroupbutton {
+  margin-top: 25px;
+}
+.groups {
+  height: 60vh;
+  margin: 25px 5px;
+  overflow-y: auto;
+}
+.group {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  margin: 10px;
+}
+.groupButton {
+  width: 100%;
+}
+.users {
+  height: 60vh;
+  margin: 25px 5px;
+  overflow-y: auto;
+}
+
+.user {
+  display: flex;
+}
+.appcontainer {
+  display: flex;
+}
+.identity {
+  display: block;
+}
