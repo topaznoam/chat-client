@@ -1,0 +1,21 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+body {
+  background-color: #3f50b5;
+}
+
+.loginPaper {
+  padding: 2rem;
+  height: auto;
+  width: 280px;
+  text-align: center;
+}
+
+h4 {
+  margin: 12px;
+  font-weight: bold;
+}

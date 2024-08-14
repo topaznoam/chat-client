@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { TextField, IconButton, Grid } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import "../App.css";
-import { useGlobalContext } from "../GlobalContext";
-import { sendMessage } from "../api/MessagesApiClient";
+import "./chat.css";
+import { useGlobalContext } from "../../../GlobalContext";
+import { sendMessage } from "../../../api/MessagesApiClient";
 
 export type Message = {
   data: string;

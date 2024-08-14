@@ -22,7 +22,7 @@ const StaticAvatarImg: React.FC<StaticAvatarImgProps> = ({ img }) => {
         <Avatar src={img} />
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <img src={img} style={{ width: 400, height: 400 }} alt="Avatar" />
+        <img src={img} alt="Avatar" />
       </Dialog>
     </Grid>
   );

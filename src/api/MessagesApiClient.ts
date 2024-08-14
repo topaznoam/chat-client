@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Message } from "../components/MessageBar";
+import { Message } from "../components/chat/chat/MessageBar";
 import { SERVER_URL } from "../Constants";
 import { SocketType } from "../GlobalContext";
 

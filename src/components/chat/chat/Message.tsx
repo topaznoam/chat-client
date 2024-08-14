@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import "../App.css";
+import "./chat.css";
 
 export type MessageProps = {
   id: number;
@@ -12,7 +12,7 @@ export type MessageProps = {
 
 const Message: React.FC<MessageProps> = (message: MessageProps) => {
   return (
-    <Grid sx={{ mt: 1 }}>
+    <Grid>
       <Grid className="messageContainer">
         <Grid
           item

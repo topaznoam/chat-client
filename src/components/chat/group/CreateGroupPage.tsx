@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Paper, TextField } from "@mui/material";
-import { ICON } from "../Constants";
-import User, { UserProps } from "./user";
+import { ICON } from "../../../Constants";
+import User, { UserProps } from "../user/user";
 import { useNavigate } from "react-router-dom";
-import { getAllUsers } from "../api/UserApiClient";
-import { createGroup } from "../api/GroupApiCliient";
-import BlockPage from "./BlockPage";
-import { useGlobalContext } from "../GlobalContext";
+import { getAllUsers } from "../../../api/UserApiClient";
+import { createGroup } from "../../../api/GroupApiCliient";
+import BlockPage from "../block/BlockPage";
+import { useGlobalContext } from "../../../GlobalContext";
 
 const CreateGroupPage: React.FC = () => {
   const { currentUser } = useGlobalContext();
@@ -23,7 +23,7 @@ const CreateGroupPage: React.FC = () => {
   };
 
   const handleCreateClick = async () => {
-    if (currentUser?.myId) {
+    if (currentUser?.myId && groupName) {
       const usersIdList = [
         currentUser.myId,
         ...users.filter((user) => user.checkbox).map((user) => user.id),
@@ -82,7 +82,6 @@ const CreateGroupPage: React.FC = () => {
               variant="contained"
               fullWidth
               onClick={handleCreateClick}
-              sx={{ mt: 1 }}
             >
               <h4>CREATE</h4>
             </Button>

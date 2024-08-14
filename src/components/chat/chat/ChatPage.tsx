@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Paper } from "@mui/material";
 import { io } from "socket.io-client";
-import { SERVER_URL } from "../Constants";
-import "../App.css";
-import Group, { GroupProps } from "./Group";
+import { SERVER_URL } from "../../../Constants";
+import "./chat.css";
+import Group, { GroupProps } from "../group/Group";
 import MessageBar from "./MessageBar";
 import Message, { MessageProps } from "./Message";
-import { SocketType, useGlobalContext } from "../GlobalContext";
+import { SocketType, useGlobalContext } from "../../../GlobalContext";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { useNavigate } from "react-router-dom";
-import { getMyGroups, sendCurrentGroupId } from "../api/GroupApiCliient";
-import BlockPage from "./BlockPage";
-import UserIdentity from "./UserIdentity";
-import { getGroupMessages } from "../api/MessagesApiClient";
-import StaticAvatarImg from "./StaticAvatarImg";
+import { getMyGroups, sendCurrentGroupId } from "../../../api/GroupApiCliient";
+import BlockPage from "../block/BlockPage";
+import UserIdentity from "../user/UserIdentity";
+import { getGroupMessages } from "../../../api/MessagesApiClient";
+import StaticAvatarImg from "../avatars/StaticAvatarImg";
 
 const ChatPage: React.FC = () => {
   const {
     currentUser,
+    setCurrentUser,
     currentGroup,
     setCurrentGroup,
     currentSocket,
@@ -58,6 +59,7 @@ const ChatPage: React.FC = () => {
       if (currentUser?.myId) {
         const groups = await getMyGroups(currentUser.myId);
         setGroups(groups);
+        sessionStorage.setItem("groups", JSON.stringify(groups));
       }
     } catch (error) {
       console.error("Failed to load groups:", error);
@@ -66,35 +68,48 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      loadGroups();
-      const socket = openSocket();
-      socket.on("onMessage", (content: { content: MessageProps }) => {
-        const newMessage: MessageProps = {
-          id: content.content.id,
-          text: content.content.text,
-          time: content.content.time,
-          isSent: content.content.senderusername === currentUser?.myUserName,
-          senderusername: content.content.senderusername,
-        };
-        createNewMessage(newMessage);
-      });
-
-      return () => {
-        socket.off("onMessage");
-        socket.close();
-      };
+      sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
+    } else {
+      const storedUser = sessionStorage.getItem("currentUser");
+      const storedGroups = sessionStorage.getItem("groups");
+      if (storedUser && storedGroups) {
+        setCurrentUser(JSON.parse(storedUser));
+        setGroups(JSON.parse(storedGroups));
+      }
     }
+    loadGroups();
+    const socket = openSocket();
+    socket.on("onMessage", (content: { content: MessageProps }) => {
+      const newMessage: MessageProps = {
+        id: content.content.id,
+        text: content.content.text,
+        time: content.content.time,
+        isSent: content.content.senderusername === currentUser?.myUserName,
+        senderusername: content.content.senderusername,
+      };
+      createNewMessage(newMessage);
+    });
+
+    return () => {
+      socket.off("onMessage");
+      socket.close();
+    };
   }, []);
 
-  const handleGroupClick = (group: GroupProps) => {
-    (async () => {
-      loadGroups();
-      setCurrentGroup(group);
-      await getMessages(group.id);
-      currentSocket
-        ? sendCurrentGroupId(group.id, currentSocket)
-        : console.error("not connected");
-    })();
+  useEffect(() => {
+    const element = document.getElementById("scrollable-element");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleGroupClick = async (group: GroupProps) => {
+    loadGroups();
+    setCurrentGroup(group);
+    await getMessages(group.id);
+    currentSocket
+      ? sendCurrentGroupId(group.id, currentSocket)
+      : console.error("not connected");
   };
 
   const handleAddGroupClick = () => {
@@ -117,7 +132,7 @@ const ChatPage: React.FC = () => {
                 ) : null}
                 <Grid container>
                   <Grid className="MessagesBoxAndBar">
-                    <Grid className="chatMessages">
+                    <Grid id="scrollable-element" className="chatMessages">
                       {messages.map((message: MessageProps) => (
                         <Message key={message.id} {...message} />
                       ))}
@@ -127,14 +142,13 @@ const ChatPage: React.FC = () => {
                 </Grid>
               </Grid>
               <Grid>
-                <Grid>
+                <Grid className="addgroupbutton">
                   <Button
                     type="submit"
                     color="primary"
                     variant="contained"
                     fullWidth
                     onClick={handleAddGroupClick}
-                    sx={{ mt: 1 }}
                   >
                     <GroupAddIcon />
                   </Button>
@@ -144,7 +158,9 @@ const ChatPage: React.FC = () => {
                     <Group
                       key={group.id}
                       {...group}
-                      onClick={() => handleGroupClick(group)}
+                      onClick={() => {
+                        handleGroupClick(group);
+                      }}
                     />
                   ))}
                 </Grid>
