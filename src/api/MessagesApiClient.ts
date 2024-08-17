@@ -29,3 +29,13 @@ export const sendMessage = async (msg: Message, socket: SocketType) => {
     console.error("Message details are incomplete");
   }
 };
+
+export const getSummery = async (groupId: number) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/messages/${groupId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching group messages:", error);
+    throw error;
+  }
+};

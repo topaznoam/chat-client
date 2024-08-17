@@ -1,0 +1,26 @@
+.summarycontainer {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+.summarypaper {
+  display: block;
+  height: 68vh;
+  width: 32vh;
+}
+.summaryspaceing {
+  margin: 20px;
+}
+.pickgroup {
+  width: 80%;
+}
+.group {
+  display: flex;
+  gap: 20px;
+}
+
+.datastring {
+  margin: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
