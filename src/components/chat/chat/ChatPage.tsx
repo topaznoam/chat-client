@@ -14,6 +14,7 @@ import BlockPage from "../block/BlockPage";
 import UserIdentity from "../user/UserIdentity";
 import { getGroupMessages } from "../../../api/MessagesApiClient";
 import StaticAvatarImg from "../avatars/StaticAvatarImg";
+import SummarySection from "../../summary/summary";
 
 const ChatPage: React.FC = () => {
   const {
@@ -120,12 +121,15 @@ const ChatPage: React.FC = () => {
     <Grid>
       {currentUser ? (
         <Grid className="appcontainer">
-          <UserIdentity />
+          <Grid>
+            <UserIdentity />
+            <SummarySection groups={groups} />
+          </Grid>
           <Paper className="chatPaper">
-            <Grid container direction="column" className="chatContainer">
+            <Grid container className="chatContainer">
               <Grid>
                 {currentGroup ? (
-                  <Grid container alignItems="center" className="chatHeader">
+                  <Grid container className="chatHeader">
                     <StaticAvatarImg img={currentGroup.avatar} />
                     <Grid className="chatTitle">{currentGroup.name}</Grid>
                   </Grid>
