@@ -1,9 +1,19 @@
 import axios from "axios";
-import { ICON } from "../Constants";
+import { ICON, SERVER_URL } from "../Constants";
 
-export const SignUp = async (userUsername: string, userPassword: string) => {
+export const getAllUsers = async () => {
   try {
-    const response = await axios.post("http://localhost:3000/users/signup", {
+    const response = await axios.get(`${SERVER_URL}/users`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching group messages:", error);
+    throw error;
+  }
+};
+
+export const signUp = async (userUsername: string, userPassword: string) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/users/signup`, {
       username: userUsername,
       password: userPassword,
       avatar: ICON,
@@ -15,9 +25,9 @@ export const SignUp = async (userUsername: string, userPassword: string) => {
   }
 };
 
-export const LogIn = async (userUsername: string, userPassword: string) => {
+export const logIn = async (userUsername: string, userPassword: string) => {
   try {
-    const response = await axios.post("http://localhost:3000/users/login", {
+    const response = await axios.post(`${SERVER_URL}/users/login`, {
       username: userUsername,
       password: userPassword,
     });
@@ -25,5 +35,19 @@ export const LogIn = async (userUsername: string, userPassword: string) => {
   } catch (error) {
     console.error("Log In Error:", error);
     throw error;
+  }
+};
+
+export const updateUserImageInServer = async (
+  imageData: string,
+  userId: number
+) => {
+  try {
+    const response = await axios.put(`${SERVER_URL}/users/${userId}/img`, {
+      imageSrc: imageData,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading image to server:", error);
   }
 };

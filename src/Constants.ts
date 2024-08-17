@@ -1,4 +1,5 @@
 export const ICON = "/img/icon.png";
+export const BACKCHAT = "/img/backchat.png";
 export const SIGNUP_TEXT = "Sign Up";
 export const LOGIN_TEXT = "Log In";
 export const USERNAME_LABEL = "Username";
@@ -7,3 +8,5 @@ export const PASSWORD_LABEL = "Password";
 export const PASSWORD_INSTRUCTIONS = "Enter password";
 export const SIGNIN_UI_DIRECTIONS = "Already have an account?";
 export const LOGIN_UI_DIRECTIONS = "Don't have an account?";
+export const SERVER_URL = "http://localhost:3000";
+export const BLOCK_MESSAGE = "please register";
